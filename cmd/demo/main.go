@@ -69,6 +69,6 @@ func init_fh(fh *gofio.Gofio) {
 func create(fh *gofio.Gofio) {
 	err := fh.Create()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 }

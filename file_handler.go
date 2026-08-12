@@ -1,6 +1,9 @@
 package gofio
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
 // Supported file extension
 const (
@@ -27,15 +30,16 @@ func (fh *Gofio) Create() error {
 	// check if file exists
 	_, err = os.Stat(fh.filepath)
 	if !os.IsNotExist(err) {
+		fmt.Println("Here")
 		return nil
-	} else if err != nil {
-		return err
 	}
 
 	// else create one
 	file, err = os.Create(fh.filepath)
 	if err != nil {
 		return err
+	} else {
+		fmt.Println("File created")
 	}
 
 	defer func() {
