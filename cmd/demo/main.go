@@ -43,6 +43,8 @@ func main() {
 			create(&fh)
 		case int(FILE_INFO):
 			file_info(&fh)
+		case int(READ):
+			read_file(&fh)
 		case int(EXIT):
 			fmt.Println("Exiting ...")
 			return
@@ -101,6 +103,18 @@ func file_info(fh *gofio.Gofio){
 		return
 	}
 	fmt.Printf("Filepath : %s\nFile Extension : %s\n", fp, fext)
+}
+
+func read_file(fh *gofio.Gofio){
+	// parse the file
+	err := fh.Parse()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// read file
+	data := fh.Read()
+	fmt.Println(data)
 }
 
 /*    HELPERS    */

@@ -41,6 +41,10 @@ func (fh *Gofio)Get_file_extension() string {
 	return fh.extension
 }
 
+func (fh *Gofio)Get_file_data() string {
+	return fh.data
+}
+
 func (fh *Gofio) Create() error {
 	var file *os.File
 	var err error
@@ -86,9 +90,18 @@ func (fh *Gofio) Create() error {
 	return nil
 }
 
-// func (fh *Gofio) Parse() error {
+func (fh *Gofio) Parse() error {
+	data, err := os.ReadFile(fh.filepath)
+	if err != nil {
+		return err
+	}
+	fh.data = string(data)
+	return nil
+}
 
-// }
+func (fh Gofio) Read() string {
+	return fh.Get_file_data()
+}
 
 /*  HELPERS  */
 func is_valid_file_ext(ext string) bool {
