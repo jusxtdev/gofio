@@ -6,12 +6,24 @@ import (
 	"log"
 )
 
+type Option int
+
+const (
+	CREATE Option = iota + 1
+	RE_INITIALIZE
+	READ
+	APPEND
+	DELETE
+	EXIT
+)
+
 var choices = map[string]int{
-	"Create a file":  1,
-	"Read file":      2,
-	"Append to file": 3,
-	"Clear to file":  4,
-	"Exit":           5,
+	"Create a file":      int(CREATE),
+	"Read file":          int(READ),
+	"Append to file":     int(APPEND),
+	"Delete file":        int(DELETE),
+	"Re-Initialize file": int(RE_INITIALIZE),
+	"Exit":               int(EXIT),
 }
 
 func main() {
@@ -69,6 +81,6 @@ func init_fh(fh *gofio.Gofio) {
 func create(fh *gofio.Gofio) {
 	err := fh.Create()
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 }
