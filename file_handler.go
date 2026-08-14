@@ -48,7 +48,6 @@ func (fh *Gofio) Create() error {
 	// check if file exists
 	_, err = os.Stat(fh.filepath)
 	if !os.IsNotExist(err) {
-		fmt.Println("Here")
 		return nil
 	}
 
@@ -72,11 +71,12 @@ func (fh *Gofio) Create() error {
 	var data string
 	if fh.extension == JSON {
 		data = "[]"
-		// store initial data into memory
-		fh.data = data
-
+	} else {
 		data = ""
 	}
+	// store initial data into memory
+	fh.data = data
+
 	// write inital content
 	_, err = file.Write([]byte(data))
 	if err != nil {
@@ -85,6 +85,10 @@ func (fh *Gofio) Create() error {
 
 	return nil
 }
+
+// func (fh *Gofio) Parse() error {
+
+// }
 
 /*  HELPERS  */
 func is_valid_file_ext(ext string) bool {
