@@ -3,6 +3,7 @@ package gofio
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 // Supported file extension
@@ -19,8 +20,25 @@ type Gofio struct {
 }
 
 func (fh *Gofio) Initialize(extension string, filepath string) {
-	fh.extension = extension
+	// check whether file extension is supported or not
+	ext := strings.Split(filepath, ".")[1]
+	
+	valid_ext := is_valid_file_ext(ext)
+	if !valid_ext{
+		fmt.Printf("File extension `%s` not supported\n", ext)
+		return
+	}
+
 	fh.filepath = filepath
+	fh.extension = ext
+}
+
+func (fh *Gofio)Get_filepath() string {
+	return fh.filepath
+}
+
+func (fh *Gofio)Get_file_extension() string {
+	return fh.extension
 }
 
 func (fh *Gofio) Create() error {
@@ -66,4 +84,14 @@ func (fh *Gofio) Create() error {
 	}
 
 	return nil
+}
+
+/*  HELPERS  */
+func is_valid_file_ext(ext string) bool {
+	switch ext{
+	case TXT, MARKDOWN, JSON:
+		return true
+	default:
+		return false
+	}
 }

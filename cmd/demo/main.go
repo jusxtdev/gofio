@@ -11,6 +11,7 @@ type Option int
 const (
 	CREATE Option = iota + 1
 	RE_INITIALIZE
+	FILE_INFO
 	READ
 	APPEND
 	DELETE
@@ -24,6 +25,7 @@ var choices = map[string]int{
 	"Delete file":        int(DELETE),
 	"Re-Initialize file": int(RE_INITIALIZE),
 	"Exit":               int(EXIT),
+	"Print file info": int(FILE_INFO),
 }
 
 func main() {
@@ -36,9 +38,12 @@ func main() {
 		choice := menu()
 
 		switch choice {
-		case 1:
+		case int(CREATE):
 			create(&fh)
+		case int(FILE_INFO):
+			file_info(&fh)
 		}
+
 	}
 }
 
@@ -61,16 +66,9 @@ func menu() int {
 func init_fh(fh *gofio.Gofio) {
 	var ext string
 
-	fmt.Printf("Enter Extension : ")
-
-	_, err := fmt.Scanln(&ext)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	var filepath string
 	fmt.Printf("Enter filepath : ")
-	_, err = fmt.Scanln(&filepath)
+	_, err := fmt.Scanln(&filepath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -83,4 +81,14 @@ func create(fh *gofio.Gofio) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func file_info(fh *gofio.Gofio){
+	fp := fh.Get_filepath()
+	fext := fh.Get_file_extension()
+	if fp == "" || fext == ""{
+		fmt.Println("File not initialzed")
+		return
+	}
+	fmt.Printf("Filepath : %s\nFile Extension : %s\n", fp, fext)
 }
