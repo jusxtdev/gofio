@@ -43,6 +43,11 @@ func main() {
 			create(&fh)
 		case int(FILE_INFO):
 			file_info(&fh)
+		case int(EXIT):
+			fmt.Println("Exiting ...")
+			return
+		default:
+			fmt.Println("Not Implemented, Come back later !")
 		}
 
 	}
