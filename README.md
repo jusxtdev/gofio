@@ -1,27 +1,60 @@
 # gofio
 
-File handling with go
+A small Go library that simplifies file handling for text-based files.
 
-- A library to simplify file handling in Golang
+## Supported formats
 
-## Working
+- `.txt`
+- `.md`
+- `.json`
 
-- File Handler initialization
-  - Either provide file path for a new file
-  - Or a file path to an existing file to work with
-  - Extension of the file will be inferred from the file path
-- After initialization, Gofio object can be used to perform following I/O operations
-  1. Create the file
-  2. Read the file contents (returns the string i.e. JSON will also be returned as string hence requiring the consumer to do the Unmarshalling)
-  3. Append to file
-  4. Delete File
-  5. Re-initialize filehandler (to change the file path contained by the Gofio object)
+## Usage
+
+```go
+package main
+
+import (
+	"fmt"
+	"gofio"
+)
+
+func main() {
+	var fh gofio.Gofio
+	fh.Initialize("", "notes.txt")
+
+	fh.Create()
+	fh.Parse()
+	fh.Append("hello world\n")
+	fh.Save()
+
+	data, _ := fh.Read()
+	fmt.Println(data)
+
+	fh.Delete()
+}
+```
+
+## API
+
+| Method | Description |
+| --- | --- |
+| `Initialize(extension, filepath)` | Sets up the handler. The file extension is inferred from the filepath. |
+| `Create()` | Creates the file if it does not exist (JSON files start as `[]`). |
+| `Parse()` | Reads the file contents into memory. |
+| `Read()` | Returns the file contents as a string (requires `Parse()` first). |
+| `Append(content)` | Appends content to the in-memory data. |
+| `Save()` | Writes the in-memory data to disk. |
+| `Delete()` | Removes the file from disk. |
+| `Get_filepath()` | Returns the file path. |
+| `Get_file_extension()` | Returns the file extension. |
+| `Check_parsed()` | Returns whether the file has been parsed. |
+
+Note: JSON is read and written as a raw string, so you are responsible for marshalling/unmarshalling.
 
 ## Demo
 
-- I have built a cli app for the demo
-- Run using
+A CLI demo is available in `cmd/demo`. Run it with:
 
-```go
+```sh
 go run cmd/demo/main.go
 ```
