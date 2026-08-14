@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gofio"
 	"log"
+	"slices"
 )
 
 type Option int
@@ -18,14 +19,14 @@ const (
 	EXIT
 )
 
-var choices = map[string]int{
-	"Create a file":      int(CREATE),
-	"Read file":          int(READ),
-	"Append to file":     int(APPEND),
-	"Delete file":        int(DELETE),
-	"Re-Initialize file": int(RE_INITIALIZE),
-	"Exit":               int(EXIT),
-	"Print file info": int(FILE_INFO),
+var choices = map[int]string{
+	int(CREATE) : "Create a file",
+	int(READ): "Read file",
+	int(APPEND) : "Append to file",
+	int(DELETE) : "Delete file",
+	int(RE_INITIALIZE) : "Re-Initialize file",
+	int(EXIT) : "Exit",
+	int(FILE_INFO): "Print file info",
 }
 
 func main() {
@@ -48,8 +49,10 @@ func main() {
 }
 
 func menu() int {
-	for key, value := range choices {
-		fmt.Printf("%d : %s\n", value, key)
+	var sorted_keys []int = get_sorted_keys()
+
+	for _, key := range sorted_keys {
+		fmt.Printf("%d : %s\n", key, choices[key])
 	}
 
 	var choice int
@@ -62,6 +65,8 @@ func menu() int {
 
 	return choice
 }
+
+/*  FUNCTIONALITIES  */
 
 func init_fh(fh *gofio.Gofio) {
 	var ext string
@@ -91,4 +96,19 @@ func file_info(fh *gofio.Gofio){
 		return
 	}
 	fmt.Printf("Filepath : %s\nFile Extension : %s\n", fp, fext)
+}
+
+/*    HELPERS    */
+func get_sorted_keys() []int {
+	// choices map[int]string => we have to sort according to int here
+	var keys []int
+
+	// extract keys from choices
+	for key := range choices {
+		keys = append(keys, key)
+	}
+
+	// sort keys
+	slices.Sort(keys)
+	return keys
 }
