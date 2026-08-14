@@ -145,6 +145,14 @@ func (fh Gofio) Save() (error){
 	return nil
 }
 
+func (fh Gofio) Delete() (error) {
+	err := os.Remove(fh.filepath)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 /*  HELPERS  */
 func is_valid_file_ext(ext string) bool {
 	switch ext{

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"gofio"
 	"log"
@@ -47,6 +48,8 @@ func main() {
 		switch choice {
 		case int(CREATE):
 			create(&fh)
+		case int(RE_INITIALIZE):
+			init_fh(&fh)
 		case int(FILE_INFO):
 			file_info(&fh)
 		case int(PARSE):
@@ -57,6 +60,8 @@ func main() {
 			append_to_file(&fh)
 		case int(SAVE):
 			save_file(fh)
+		case int(DELETE):
+			delete_file(fh)
 		case int(EXIT):
 			fmt.Println("Exiting ...")
 			return
@@ -175,6 +180,21 @@ func save_file(fh gofio.Gofio) {
 	fmt.Println("File saved successfully")
 } 
 
+func delete_file(fh gofio.Gofio) {
+	// confirm before deleting
+	prompt := fmt.Sprintf("Are you sure you want to delete : %s ?", fh.Get_filepath())
+	confirm, err := yes_no_prompt(prompt)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	if !confirm {
+		return
+	}
+	
+	fh.Delete()
+}
 
 /*    HELPERS    */
 func get_sorted_keys() []int {
@@ -189,4 +209,23 @@ func get_sorted_keys() []int {
 	// sort keys
 	slices.Sort(keys)
 	return keys
+}
+
+func yes_no_prompt(s string) (bool, error) {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Printf("%s [y/n] : ", s)
+	
+	char, _, err := reader.ReadRune()
+	if err != nil{
+		return false, err
+	}
+
+	switch char{
+	case 'y':
+		return true, nil
+	case 'n':
+		return false, nil
+	default:
+		return false, errors.New("Invalid value")
+	}
 }
