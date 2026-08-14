@@ -1,6 +1,7 @@
 package gofio
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -17,6 +18,7 @@ type Gofio struct {
 	extension string
 	filepath  string
 	data      string
+	is_parsed bool
 }
 
 func (fh *Gofio) Initialize(extension string, filepath string) {
@@ -31,6 +33,7 @@ func (fh *Gofio) Initialize(extension string, filepath string) {
 
 	fh.filepath = filepath
 	fh.extension = ext
+	fh.is_parsed = false
 }
 
 func (fh *Gofio)Get_filepath() string {
@@ -41,8 +44,11 @@ func (fh *Gofio)Get_file_extension() string {
 	return fh.extension
 }
 
-func (fh *Gofio)Get_file_data() string {
-	return fh.data
+func (fh *Gofio)Get_file_data() (string, error) {
+	if !fh.is_parsed{
+		return "", errors.New("File not parsed.")
+	}
+	return fh.data, nil
 }
 
 func (fh *Gofio) Create() error {
@@ -96,11 +102,17 @@ func (fh *Gofio) Parse() error {
 		return err
 	}
 	fh.data = string(data)
+	fh.is_parsed = true
 	return nil
 }
 
-func (fh Gofio) Read() string {
-	return fh.Get_file_data()
+func (fh *Gofio) Read() (string, error) {
+	data, err := fh.Get_file_data()
+	if err != nil{
+		return "", err
+	}
+
+	return data, nil
 }
 
 /*  HELPERS  */

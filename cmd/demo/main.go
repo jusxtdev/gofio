@@ -13,6 +13,7 @@ const (
 	CREATE Option = iota + 1
 	RE_INITIALIZE
 	FILE_INFO
+	PARSE
 	READ
 	APPEND
 	DELETE
@@ -22,6 +23,7 @@ const (
 var choices = map[int]string{
 	int(CREATE) : "Create a file",
 	int(READ): "Read file",
+	int(PARSE): "Parse file",
 	int(APPEND) : "Append to file",
 	int(DELETE) : "Delete file",
 	int(RE_INITIALIZE) : "Re-Initialize file",
@@ -43,6 +45,8 @@ func main() {
 			create(&fh)
 		case int(FILE_INFO):
 			file_info(&fh)
+		case int(PARSE):
+			parse_file(&fh)
 		case int(READ):
 			read_file(&fh)
 		case int(EXIT):
@@ -105,15 +109,20 @@ func file_info(fh *gofio.Gofio){
 	fmt.Printf("Filepath : %s\nFile Extension : %s\n", fp, fext)
 }
 
-func read_file(fh *gofio.Gofio){
-	// parse the file
+func parse_file(fh *gofio.Gofio){
 	err := fh.Parse()
 	if err != nil {
 		fmt.Println(err)
 	}
+}
 
+func read_file(fh *gofio.Gofio){
 	// read file
-	data := fh.Read()
+	data, err := fh.Read()
+	if err != nil{
+		fmt.Println(err)
+		return
+	}
 	fmt.Println(data)
 }
 
