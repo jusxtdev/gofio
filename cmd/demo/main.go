@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"gofio"
 	"log"
+	"os"
 	"slices"
 )
 
@@ -16,6 +18,7 @@ const (
 	PARSE
 	READ
 	APPEND
+	SAVE
 	DELETE
 	EXIT
 )
@@ -25,6 +28,7 @@ var choices = map[int]string{
 	int(READ): "Read file",
 	int(PARSE): "Parse file",
 	int(APPEND) : "Append to file",
+	int(SAVE) : "Save file",
 	int(DELETE) : "Delete file",
 	int(RE_INITIALIZE) : "Re-Initialize file",
 	int(EXIT) : "Exit",
@@ -49,6 +53,10 @@ func main() {
 			parse_file(&fh)
 		case int(READ):
 			read_file(&fh)
+		case int(APPEND):
+			append_to_file(&fh)
+		case int(SAVE):
+			save_file(fh)
 		case int(EXIT):
 			fmt.Println("Exiting ...")
 			return
@@ -125,6 +133,48 @@ func read_file(fh *gofio.Gofio){
 	}
 	fmt.Println(data)
 }
+
+func append_to_file(fh *gofio.Gofio) {
+	if !fh.Check_parsed(){
+		fmt.Println("File Not parsed !")
+		return
+	}
+
+	var content string
+
+	scanner := bufio.NewScanner(os.Stdin)
+
+	fmt.Printf("Enter Content to append (EOF or Ctrl+d to stop)\n")
+	// this loop reads each line, return `false` if EOF encountered
+	fmt.Printf("> ")
+	for scanner.Scan(){
+		fmt.Printf("> ")
+		line := scanner.Text()
+		content = content + line + "\n"
+	}
+	// err check for scanner, it will not throw err if EOF otherwise raises error
+	if err := scanner.Err(); err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err := fh.Append(content)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("Succesfully append %d bytes\n", len(content))
+}
+
+func save_file(fh gofio.Gofio) {
+	err := fh.Save()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println("File saved successfully")
+} 
+
 
 /*    HELPERS    */
 func get_sorted_keys() []int {

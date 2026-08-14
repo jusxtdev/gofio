@@ -51,6 +51,14 @@ func (fh *Gofio)Get_file_data() (string, error) {
 	return fh.data, nil
 }
 
+func (fh Gofio)Check_parsed() bool{
+	if !fh.is_parsed{
+		return false
+	}
+	return true
+
+}
+
 func (fh *Gofio) Create() error {
 	var file *os.File
 	var err error
@@ -113,6 +121,28 @@ func (fh *Gofio) Read() (string, error) {
 	}
 
 	return data, nil
+}
+
+func (fh *Gofio) Append(content string) (error) {
+	if !fh.is_parsed{
+		return errors.New("File not parsed.")
+	}
+
+	fh.data = fh.data + content
+	return nil
+}
+
+func (fh Gofio) Save() (error){
+	if !fh.is_parsed{
+		return errors.New("File not parsed.")
+	}
+
+	content := []byte(fh.data)
+	err := os.WriteFile(fh.filepath, content, 0644)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 /*  HELPERS  */
