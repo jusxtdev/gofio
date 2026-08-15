@@ -21,19 +21,20 @@ type Gofio struct {
 	is_parsed bool
 }
 
-func (fh *Gofio) Initialize(filepath string) {
+func (fh *Gofio) Initialize(filepath string) error {
 	// check whether file extension is supported or not
 	ext := strings.Split(filepath, ".")[1]
 
 	valid_ext := is_valid_file_ext(ext)
 	if !valid_ext {
-		fmt.Printf("File extension `%s` not supported\n", ext)
-		return
+		msg := fmt.Sprintf("file extension `%s` not supported\n", ext)
+		return errors.New(msg)
 	}
 
 	fh.filepath = filepath
 	fh.extension = ext
 	fh.is_parsed = false
+	return nil
 }
 
 func (fh *Gofio) Get_filepath() string {
