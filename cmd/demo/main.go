@@ -93,8 +93,6 @@ func menu() int {
 /*  FUNCTIONALITIES  */
 
 func init_fh(fh *gofio.Gofio) {
-	var ext string
-
 	var filepath string
 	fmt.Printf("Enter filepath : ")
 	_, err := fmt.Scanln(&filepath)
@@ -102,7 +100,7 @@ func init_fh(fh *gofio.Gofio) {
 		log.Fatal(err)
 	}
 
-	fh.Initialize(ext, filepath)
+	fh.Initialize(filepath)
 }
 
 func create(fh *gofio.Gofio) {

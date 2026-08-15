@@ -21,7 +21,7 @@ type Gofio struct {
 	is_parsed bool
 }
 
-func (fh *Gofio) Initialize(extension string, filepath string) {
+func (fh *Gofio) Initialize(filepath string) {
 	// check whether file extension is supported or not
 	ext := strings.Split(filepath, ".")[1]
 
