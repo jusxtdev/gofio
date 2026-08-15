@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"gofio"
+	"github.com/jusxtdev/gofio"
 	"log"
 	"os"
 	"slices"
@@ -25,15 +25,15 @@ const (
 )
 
 var choices = map[int]string{
-	int(CREATE) : "Create a file",
-	int(READ): "Read file",
-	int(PARSE): "Parse file",
-	int(APPEND) : "Append to file",
-	int(SAVE) : "Save file",
-	int(DELETE) : "Delete file",
-	int(RE_INITIALIZE) : "Re-Initialize file",
-	int(EXIT) : "Exit",
-	int(FILE_INFO): "Print file info",
+	int(CREATE):        "Create a file",
+	int(READ):          "Read file",
+	int(PARSE):         "Parse file",
+	int(APPEND):        "Append to file",
+	int(SAVE):          "Save file",
+	int(DELETE):        "Delete file",
+	int(RE_INITIALIZE): "Re-Initialize file",
+	int(EXIT):          "Exit",
+	int(FILE_INFO):     "Print file info",
 }
 
 func main() {
@@ -73,7 +73,7 @@ func main() {
 }
 
 func menu() int {
-	var sorted_keys []int = get_sorted_keys()
+	var sorted_keys = get_sorted_keys()
 
 	for _, key := range sorted_keys {
 		fmt.Printf("%d : %s\n", key, choices[key])
@@ -112,27 +112,27 @@ func create(fh *gofio.Gofio) {
 	}
 }
 
-func file_info(fh *gofio.Gofio){
+func file_info(fh *gofio.Gofio) {
 	fp := fh.Get_filepath()
 	fext := fh.Get_file_extension()
-	if fp == "" || fext == ""{
+	if fp == "" || fext == "" {
 		fmt.Println("File not initialzed")
 		return
 	}
 	fmt.Printf("Filepath : %s\nFile Extension : %s\n", fp, fext)
 }
 
-func parse_file(fh *gofio.Gofio){
+func parse_file(fh *gofio.Gofio) {
 	err := fh.Parse()
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 
-func read_file(fh *gofio.Gofio){
+func read_file(fh *gofio.Gofio) {
 	// read file
 	data, err := fh.Read()
-	if err != nil{
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
@@ -140,7 +140,7 @@ func read_file(fh *gofio.Gofio){
 }
 
 func append_to_file(fh *gofio.Gofio) {
-	if !fh.Check_parsed(){
+	if !fh.Check_parsed() {
 		fmt.Println("File Not parsed !")
 		return
 	}
@@ -152,7 +152,7 @@ func append_to_file(fh *gofio.Gofio) {
 	fmt.Printf("Enter Content to append (EOF or Ctrl+d to stop)\n")
 	// this loop reads each line, return `false` if EOF encountered
 	fmt.Printf("> ")
-	for scanner.Scan(){
+	for scanner.Scan() {
 		fmt.Printf("> ")
 		line := scanner.Text()
 		content = content + line + "\n"
@@ -178,7 +178,7 @@ func save_file(fh gofio.Gofio) {
 		return
 	}
 	fmt.Println("File saved successfully")
-} 
+}
 
 func delete_file(fh gofio.Gofio) {
 	// confirm before deleting
@@ -192,8 +192,13 @@ func delete_file(fh gofio.Gofio) {
 	if !confirm {
 		return
 	}
-	
-	fh.Delete()
+
+	err = fh.Delete()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 }
 
 /*    HELPERS    */
@@ -214,18 +219,19 @@ func get_sorted_keys() []int {
 func yes_no_prompt(s string) (bool, error) {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Printf("%s [y/n] : ", s)
-	
+
 	char, _, err := reader.ReadRune()
-	if err != nil{
+	if err != nil {
 		return false, err
 	}
 
-	switch char{
+	switch char {
 	case 'y':
 		return true, nil
 	case 'n':
 		return false, nil
 	default:
-		return false, errors.New("Invalid value")
+		return false, errors.New("invalid value")
 	}
 }
+
