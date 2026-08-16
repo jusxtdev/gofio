@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strings"
+	"path"
 )
 
 // Supported file extension
@@ -23,12 +23,13 @@ type Gofio struct {
 
 func (fh *Gofio) Initialize(filepath string) error {
 	// check whether file extension is supported or not
-	ext := strings.Split(filepath, ".")[1]
-
-	valid_ext := is_valid_file_ext(ext)
-	if !valid_ext {
-		msg := fmt.Sprintf("file extension `%s` not supported\n", ext)
-		return errors.New(msg)
+	ext := path.Ext(filepath)
+	if ext == "" {
+		return errors.New("invalid filepath")
+	}
+	ext = ext[1:]
+	if !is_valid_file_ext(ext) {
+		return errors.New("file extension not supported")
 	}
 
 	fh.filepath = filepath
@@ -79,10 +80,6 @@ func (fh *Gofio) Create() error {
 		err = file.Close()
 	}()
 
-	if err != nil {
-		return err
-	}
-
 	// initialize file
 	var data string
 	if fh.extension == JSON {
@@ -98,6 +95,8 @@ func (fh *Gofio) Create() error {
 	if err != nil {
 		return err
 	}
+
+	fh.is_parsed = true
 
 	return nil
 }
@@ -160,4 +159,3 @@ func is_valid_file_ext(ext string) bool {
 		return false
 	}
 }
-

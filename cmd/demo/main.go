@@ -97,10 +97,15 @@ func init_fh(fh *gofio.Gofio) {
 	fmt.Printf("Enter filepath : ")
 	_, err := fmt.Scanln(&filepath)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		return
 	}
 
-	fh.Initialize(filepath)
+	err = fh.Initialize(filepath)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 }
 
 func create(fh *gofio.Gofio) {
@@ -232,4 +237,3 @@ func yes_no_prompt(s string) (bool, error) {
 		return false, errors.New("invalid value")
 	}
 }
-
